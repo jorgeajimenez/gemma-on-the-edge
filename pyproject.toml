@@ -1,0 +1,15 @@
+[project]
+name = "edge-meetup"
+version = "0.1.0"
+description = "GDG Sunnyvale August 2026 Monthly Meetup - running LLM on the edge"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "llama-cpp-python>=0.2.75",
+    "huggingface-hub>=0.23.0",
+    "flask>=3.0.0",
+    "gguf>=0.6.0",
+]
+
+[tool.uv]
+dev-dependencies = []

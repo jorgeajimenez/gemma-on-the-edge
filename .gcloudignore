@@ -1,0 +1,27 @@
+# Exclude local model weight files (downloaded in Dockerfile or cached locally)
+*.gguf
+
+# Exclude virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Exclude caches and logs
+.cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Exclude git directories and metadata
+.git/
+.gitignore
+.gcloudignore
+
+# Exclude presentation resources or other documents
+slides.md
+notebooklm_starter.md
+visualizer_plan.md

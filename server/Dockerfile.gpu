@@ -1,0 +1,49 @@
+# Use official NVIDIA CUDA development image as builder
+FROM nvidia/cuda:12.2.2-devel-ubuntu22.04 AS builder
+
+# Install system build dependencies, Python, and pip
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    python3-dev \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+# Compile llama-cpp-python with CUDA acceleration enabled
+ENV CMAKE_ARGS="-DGGML_CUDA=on"
+ENV FORCE_CMAKE=1
+RUN pip3 install --upgrade pip && \
+    pip3 install --no-cache-dir wheel && \
+    pip3 install --no-cache-dir llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu122
+
+# --- Runtime Stage ---
+# Use a lighter CUDA runtime image for execution
+FROM nvidia/cuda:12.2.2-runtime-ubuntu22.04
+
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy python packages compiled in builder
+COPY --from=builder /usr/local/lib/python3.10/dist-packages /usr/local/lib/python3.10/dist-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Install web server dependencies
+RUN pip3 install --no-cache-dir flask huggingface_hub
+
+# Copy server code
+COPY server/server.py ./server.py
+
+# Expose port 5002
+EXPOSE 5002
+
+# Environment variables
+ENV N_GPU_LAYERS=-1
+
+# Run the server
+CMD ["python3", "server.py"]

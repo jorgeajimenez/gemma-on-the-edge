@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Intelligence: The Power of Local AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <style>
+        :root {
+            --bg-primary: #040407;
+            --bg-glass: rgba(10, 10, 18, 0.85);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --accent-primary: #6366f1;
+            --accent-secondary: #ec4899;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --code-bg: rgba(0, 0, 0, 0.65);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            overflow: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 40%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(10, 10, 22, 0.95);
+            border: 1px solid var(--border-glass);
+            border-radius: 1.5rem;
+            padding: 3rem 4rem;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+        }
+        
+        .slide-container.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100vw;
+            z-index: 9999;
+            border-radius: 0;
+            background: #040407;
+            padding: 5% 8%;
+        }
+
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding-bottom: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .slide-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #fff 40%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .slide-number {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(99, 102, 241, 0.12);
+            color: #a5b4fc;
+            padding: 0.35rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            white-space: nowrap;
+        }
+
+        .slide-content {
+            flex-grow: 1;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .big-idea-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .big-idea-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            line-height: 1.5;
+        }
+
+        .highlight-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .highlight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .grid-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            transition: border-color 0.2s;
+        }
+
+        .grid-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .grid-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 0.25rem;
+            font-size: 1.1rem;
+        }
+
+        .speaker-notes-card {
+            background: rgba(245, 158, 11, 0.05);
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.25rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            color: #ffedd5;
+            font-style: italic;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .speaker-notes-icon {
+            font-size: 1.2rem;
+            margin-top: -0.1rem;
+        }
+
+        .slide-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .slide-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-glass);
+            color: white;
+            padding: 0.6rem 1.15rem;
+            border-radius: 0.75rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slide-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-1px);
+        }
+
+        .slide-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-btn.primary-btn {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, #4f46e5 100%);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.2);
+            border-color: transparent;
+        }
+
+        .slide-dots {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .slide-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .slide-dot.active {
+            background: var(--accent-secondary);
+            transform: scale(1.25);
+            box-shadow: 0 0 8px var(--accent-secondary);
+
+        /* Lightbox Overlay Styles */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(4, 4, 7, 0.95);
+            backdrop-filter: blur(12px);
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            border: 1px solid rgba(255,255,255,0.15);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .lightbox-modal.active .lightbox-content {
+            transform: scale(1);
+        }
+        .slide-content img, .presenter-view img, .slides-container img, .slide-container img {
+            cursor: zoom-in !important;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        .slide-content img:hover, .presenter-view img:hover, .slides-container img:hover, .slide-container img:hover {
+            transform: scale(1.03) !important;
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slide-container" id="slide-viewer-box">
+        <div class="slide-header">
+            <div class="slide-title" id="current-slide-title">Loading Slides...</div>
+            <div class="slide-number" id="current-slide-number">Slide 1 / 14</div>
+        </div>
+        
+        <div class="slide-content" id="current-slide-body">
+            <!-- Content loaded dynamically -->
+        </div>
+        
+        <div class="speaker-notes-card">
+            <div class="speaker-notes-icon">🎙️</div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight: 500;" id="current-slide-notes">Speaker Notes</div>
+        </div>
+        
+        <div class="slide-controls">
+            <button class="slide-btn" id="slide-prev-btn" onclick="prevSlide()">⬅️ Previous</button>
+            <div class="slide-dots" id="slide-navigation-dots">
+                <!-- Dots populated dynamically -->
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="slide-btn" onclick="toggleFullscreen()">📺 Fullscreen</button>
+                <button class="slide-btn primary-btn" id="slide-next-btn" onclick="nextSlide()">Next ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slidesData = [
+            {
+                title: "Edge Intelligence: The Power of Local AI",
+                content: `
+                    <div style="text-align:center; padding: 2rem 0;">
+                        <div style="font-size: 5rem; margin-bottom: 1rem;">🧠</div>
+                        <h2 class="big-idea-text" style="font-size:3rem; margin-bottom:0.75rem;">Edge Intelligence</h2>
+                        <p class="big-idea-subtitle" style="margin: 0 auto;">
+                            Why we are leaving behind cloud-only API dependencies to orchestrate powerful open-weight neural engines directly in local memory.
+                        </p>
+                    </div>
+                `,
+                speakerScript: "Welcome. Today we're cutting through the noise. Instead of treating AI as a remote API black-box that you pay for per token, we're discussing strategic edge intelligence: running, owning, and orchestrating highly-capable open-weight models directly inside our own local hardware and systems."
+            },
+            {
+                title: "The Open Weights Evolution",
+                content: `
+                    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                        <div style="display:grid; grid-template-columns: auto 1fr; gap:1.25rem; align-items: center;">
+                            <div style="background:var(--accent-secondary); color:white; font-family:'JetBrains Mono'; font-weight:bold; padding:0.25rem 0.5rem; border-radius:0.4rem; font-size:0.7rem; text-align:center; min-width:85px;">Feb 2024</div>
+                            <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-glass); padding:0.4rem 0.85rem; border-radius:0.5rem; font-size:0.9rem;">
+                                <strong>Gemma 1.0 (2B & 7B):</strong> The original open-weights debut.
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns: auto 1fr; gap:1.25rem; align-items: center;">
+                            <div style="background:#818cf8; color:white; font-family:'JetBrains Mono'; font-weight:bold; padding:0.25rem 0.5rem; border-radius:0.4rem; font-size:0.7rem; text-align:center; min-width:85px;">Jun-Jul 2024</div>
+                            <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-glass); padding:0.4rem 0.85rem; border-radius:0.5rem; font-size:0.9rem;">
+                                <strong>Gemma 2 (9B, 27B & 2B):</strong> Upgraded architectures with premium context filtering.
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns: auto 1fr; gap:1.25rem; align-items: center;">
+                            <div style="background:#10b981; color:white; font-family:'JetBrains Mono'; font-weight:bold; padding:0.25rem 0.5rem; border-radius:0.4rem; font-size:0.7rem; text-align:center; min-width:85px;">Mar 2025</div>
+                            <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-glass); padding:0.4rem 0.85rem; border-radius:0.5rem; font-size:0.9rem;">
+                                <strong>Gemma 3 (1B–27B):</strong> Native vision (text + images) and 140+ language support.
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns: auto 1fr; gap:1.25rem; align-items: center;">
+                            <div style="background:#f59e0b; color:white; font-family:'JetBrains Mono'; font-weight:bold; padding:0.25rem 0.5rem; border-radius:0.4rem; font-size:0.7rem; text-align:center; min-width:85px;">Mid 2025</div>
+                            <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-glass); padding:0.4rem 0.85rem; border-radius:0.5rem; font-size:0.9rem;">
+                                <strong>Mobile & Micro:</strong> Ultra-compact Gemma 3 270M and smartphone-optimized Gemma 3n.
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns: auto 1fr; gap:1.25rem; align-items: center;">
+                            <div style="background:#ec4899; color:white; font-family:'JetBrains Mono'; font-weight:bold; padding:0.25rem 0.5rem; border-radius:0.4rem; font-size:0.7rem; text-align:center; min-width:85px;">Apr 2026</div>
+                            <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-glass); padding:0.4rem 0.85rem; border-radius:0.5rem; border-color: var(--accent-secondary); font-size:0.9rem;">
+                                <strong>Gemma 4 Launch:</strong> Native audio listening, Mixture-of-Experts routing, and leaderboards domination.
+                            </div>
+                        </div>
+                    </div>
+                `,
+                speakerScript: "Let's review the pace of innovation. Starting with Gemma 1.0 in early 2024, Google consistently evolved the open-weights family. We progressed from pure text processing, to multimodal image reasoning in 2025, to specialized edge-native designs, and finally to Gemma 4 in early 2026 with native audio and Mixture-of-Experts routing."
+            },
+            {
+                title: "The Strategic Shift: Why Local AI?",
+                content: `
+                    <div>
+                        <div class="big-idea-text">"What never transmits can never leak."</div>
+                        <p class="big-idea-subtitle" style="margin-bottom:1.5rem;">
+                            Moving intelligence to the edge transforms security, cost structures, and real-time responsiveness.
+                        </p>
+                        <div class="highlight-grid">
+                            <div class="grid-card">
+                                <div class="grid-card-title">⚡ Instant Response</div>
+                                <div style="font-size:0.9rem; color:var(--text-muted);">Sub-50ms local loops bypass internet latency bottlenecks.</div>
+                            </div>
+                            <div class="grid-card">
+                                <div class="grid-card-title">🔐 Architectural Privacy</div>
+                                <div style="font-size:0.9rem; color:var(--text-muted);">Data stays in local physical buffers, rendering leakage mathematically impossible.</div>
+                            </div>
+                            <div class="grid-card">
+                                <div class="grid-card-title">💰 Predictable Cost</div>
+                                <div style="font-size:0.9rem; color:var(--text-muted);">Reclaim control from proprietary APIs. Zero marginal cost per token.</div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                speakerScript: "Edge AI shifts computing to local nodes. We secure architectural privacy by design, avoid vendor lock-in, and bypass unpredictable pricing. Once you acquire local hardware, generating a million additional tokens costs you nothing."
+            },
+            {
+                title: "Visualizing the Edge Blueprint",
+                content: `
+                    <div style="text-align:center;">
+                        <img src="/AI_on_the_Edge_Infographic.png" alt="AI on the Edge Infographic" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80'" style="max-height:360px; max-width:100%; margin:0 auto; border-radius:1rem; border:1px solid var(--border-glass); box-shadow:0 12px 30px rgba(0,0,0,0.5);">
+                        <p style="font-size:0.9rem; color:var(--text-muted); margin-top:0.75rem; font-style:italic;">
+                            Decentralized Orchestration: From hardware mapping to secure local routing layers.
+                        </p>
+                    </div>
+                `,
+                speakerScript: "Here is the architectural blueprint. It visually outlines how inputs traverse tokenization and register directly into VRAM, routing through local mathematical layers to render decisions instantly with zero reliance on cloud connections."
+            },
+            {
+                title: "How Models Learn: Guessing the Next Word",
+                content: `
+                    <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center;">
+                        <div>
+                            <div class="big-idea-text" style="font-size:1.85rem; margin-bottom:0.75rem;">Trillions of Words. One Simple Goal.</div>
+                            <p style="font-size:1rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.5;">
+                                Foundation models are trained via self-supervised learning on massive text corpora. By shifting text inputs forward, the model repeatedly guesses the next token over and over.
+                            </p>
+                            <div style="background:rgba(255,255,255,0.02); padding:0.75rem 1rem; border-radius:0.5rem; border:1px solid var(--border-glass); font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#60a5fa;">
+                                Input: &nbsp;"The moon orbits the"<br>
+                                Target: "moon orbits the earth"
+                            </div>
+                        </div>
+                        <div style="text-align:center;">
+                            <img src="/reference/Screenshot 2026-08-06 at 12.56.27.png" alt="LLM Lifecycle" onerror="this.src='https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=400&q=80'" style="max-height:280px; max-width:100%; border-radius:0.75rem; border:1px solid var(--border-glass); box-shadow:0 8px 16px rgba(0,0,0,0.4);">
+                        </div>
+                    </div>
+                `,
+                speakerScript: "Under the hood, pretraining is elegant. We show the model millions of books and websites, hide the future words, and force it to predict the next word. Over trillions of cycles, this next-token guessing game forces the network to develop deep linguistic reasoning."
+            },
+            {
+                title: "Building From Scratch: The Raschka Blueprint",
+                content: `
+                    <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap:2rem; align-items:center;">
+                        <div>
+                            <div class="big-idea-text" style="font-size:1.85rem; margin-bottom:0.75rem;">Learning the Inner Workings</div>
+                            <p style="font-size:1rem; color:var(--text-muted); line-height:1.5; margin-bottom:1rem;">
+                                Much of our underlying lab material is heavily inspired by Sebastian Raschka's standard manual <em>"Build a Large Language Model (From Scratch)"</em>. Understanding how keys, queries, values, and multi-head logic blocks fit together mathematically prepares you to deploy production-tier Gemma engines.
+                            </p>
+                            <div style="color:#60a5fa; font-weight:700; font-size:1.05rem;">
+                                Core Principle: Build it to understand it.
+                            </div>
+                        </div>
+                        <div style="text-align:center;">
+                            <img src="/LLM_Scratch_Cover.png" alt="LLM From Scratch Book Cover" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80'" style="max-height:220px; border-radius:0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1);">
+                        </div>
+                    </div>
+                `,
+                speakerScript: "To truly master edge intelligence, we have to look under the hood. Our hands-on coding exercises are deeply inspired by Sebastian Raschka's famous manual, Build a Large Language Model from Scratch. By coding the attention gates, normalizations, and weight loaders themselves, we bridge the gap between high-level concepts and raw metal compilation."
+            },
+            {
+                title: "Vector Embeddings: Mapping Word Meanings",
+                content: `
+                    <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center;">
+                        <div>
+                            <div class="big-idea-text" style="font-size:1.85rem; margin-bottom:0.75rem;">Transforming Words into Coordinates</div>
+                            <p style="font-size:1rem; color:var(--text-muted); line-height:1.5; margin-bottom:1rem;">
+                                Neural networks cannot process letters. We project words into high-dimensional space, placing synonyms in close proximity to map linguistic relationships mathematically.
+                            </p>
+                            <div style="background:rgba(255,255,255,0.02); padding:0.75rem 1rem; border-radius:0.5rem; border:1px solid var(--border-glass); font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--accent-secondary);">
+                                "king" - "man" + "woman" = "queen"
+                            </div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:0.75rem; align-items:center;">
+                            <img src="/reference/embeddings_reference_book.png" alt="Embeddings Reference" onerror="this.src='https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80'" style="max-height:120px; max-width:100%; border-radius:0.5rem; border:1px solid var(--border-glass);">
+                            <img src="/reference/proximity.png" alt="Semantic Proximity Map" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=400&q=80'" style="max-height:120px; max-width:100%; border-radius:0.5rem; border:1px solid var(--border-glass);">
+                        </div>
+                    </div>
+                `,
+                speakerScript: "A model translates tokens into long lists of floating-point numbers. In this space, conceptual proximity equals mathematical proximity. Words like 'apple' and 'orange' are clustered closely together, while 'apple' and 'microchip' sit in different quadrants."
+            },
+            {
+                title: "Attention: The Relevance Filter",
+                content: `
+                    <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center;">
+                        <div>
+                            <div class="big-idea-text" style="font-size:1.85rem; margin-bottom:0.75rem;">Deciding What Matters</div>
+                            <p style="font-size:1rem; color:var(--text-muted); line-height:1.5;">
+                                Self-attention measures relationships. It allows the model to dynamically look at surrounding words, identifying whether "bank" refers to a river side or a financial institution based on context.
+                            </p>
+                        </div>
+                        <div style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:0.75rem; border:1px solid var(--border-glass); text-align:center;">
+                            <img src="/reference/attention_reference.png" alt="Attention Matrix Map" onerror="this.src='https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=400&q=80'" style="max-height:160px; max-width:100%; border-radius:0.5rem; border:1px solid rgba(255,255,255,0.1);">
+                        </div>
+                    </div>
+                `,
+                speakerScript: "Attention is the engine of the transformer. By multiplying Queries and Keys, the network creates a dynamic attention matrix. This lets the word 'bank' warp its coordinate direction depending on whether the word 'river' or 'money' is in the same context window."
+            },
+            {
+                title: "The Causal Mask: Guarding the Future",
+                content: `
+                    <div>
+                        <div class="big-idea-text">"No cheating allowed."</div>
+                        <p class="big-idea-subtitle" style="margin-bottom:1.5rem;">
+                            To ensure realistic autoregressive generation, we hide future tokens using a causal mask, allowing the network to only look backward during token prediction.
+                        </p>
+                        <div style="background:rgba(0,0,0,0.4); padding:1.25rem; border-radius:0.75rem; border:1px solid var(--border-glass); max-width:600px; margin:0 auto; font-family:'JetBrains Mono',monospace; font-size:0.9rem; text-align:center;">
+                            Token N context vector $Z$ is derived strictly from historical context [1 ... N-1].
+                        </div>
+                    </div>
+                `,
+                speakerScript: "When generating text, we apply a triangular mask filling future tokens with negative infinity in our softmax equations. This guarantees the model doesn't peak forward at words it is supposed to be predicting."
+            },
+            {
+                title: "Multi-Head Attention: Parallel Thinking",
+                content: `
+                    <div>
+                        <div class="big-idea-text">Diverse Views, Simultaneously.</div>
+                        <p class="big-idea-subtitle" style="margin-bottom:1.5rem;">
+                            Instead of analyzing a sentence from a single perspective, Multi-Head Attention splits work across parallel networks to capture syntax, relationships, and stylistic tone at the same time.
+                        </p>
+                        <div class="highlight-grid">
+                            <div class="grid-card">
+                                <div style="color:var(--accent-secondary); font-weight:bold; margin-bottom:0.15rem;">📚 Head 1: Syntax</div>
+                                Identifies sentence structure and parts of speech.
+                            </div>
+                            <div class="grid-card">
+                                <div style="color:var(--accent-secondary); font-weight:bold; margin-bottom:0.15rem;">🎯 Head 2: Entities</div>
+                                Focuses on core subjects, names, and key places.
+                            </div>
+                            <div class="grid-card">
+                                <div style="color:var(--accent-secondary); font-weight:bold; margin-bottom:0.15rem;">🎭 Head 3: Style</div>
+                                Evaluates tone, mood, and descriptive adjectives.
+                            </div>
+                        </div>
+                    </div>
+                `,
+                speakerScript: "Multi-head attention allows a model to multitask. Instead of looking at a sentence with one set of eyes, it splits its hidden layers so different heads can track grammatical structure, key characters, and emotional sentiment concurrently."
+            },
+            {
+                title: "The Mixture-of-Experts (MoE) Revolution",
+                content: `
+                    <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap:2rem; align-items:center;">
+                        <div>
+                            <div class="big-idea-text" style="font-size:1.85rem; margin-bottom:0.75rem;">A Massive Brain. Specialized Units.</div>
+                            <p style="font-size:1rem; color:var(--text-muted); line-height:1.5; margin-bottom:1rem;">
+                                Gemma 4 26B uses a Mixture-of-Experts (MoE) architecture. While the entire 26B parameter matrix stays in system memory, a gating network routes each token through only 4B active parameters at any single step.
+                            </p>
+                            <div style="color:#10b981; font-weight:700; font-size:1.05rem;">
+                                Result: The reasoning depth of a 26B model with the speed of a 4B model.
+                            </div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-glass); padding:1.25rem; border-radius:0.75rem; text-align:center;">
+                            <div style="font-size:1.1rem; font-weight:bold; margin-bottom:0.5rem; color:#60a5fa;">Active Inference Routing</div>
+                            <div style="font-size:2.5rem; font-weight:800; color:white;">4B / 26B</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem;">Parameters processed per step</div>
+                        </div>
+                    </div>
+                `,
+                speakerScript: "Mixture-of-Experts is a massive step forward for local hosting. Rather than running every word through the entire network, we only fire up a localized expert sub-network. This gives us giant-model logic depth while maintaining edge-tier speed."
+            },
+            {
+                title: "The Break-Even Logic: API vs. Local Server",
+                content: `
+                    <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap:2rem; align-items:center;">
+                        <div>
+                            <div class="big-idea-text" style="font-size:1.85rem; margin-bottom:0.75rem;">Reclaiming Your AI Budget</div>
+                            <p style="font-size:1.05rem; color:var(--text-muted); line-height:1.5; margin-bottom:1rem;">
+                                Buying hardware has upfront capital costs, but frees you from token taxes. High-end model APIs break even at incredibly modest volumes compared to local dedicated GPU nodes.
+                            </p>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                            <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-glass); padding:0.85rem; border-radius:0.5rem;">
+                                <div style="font-size:0.8rem; color:var(--text-muted);">Frontier Model Break-Even (GPT-4o)</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:#10b981;">157 Million Tokens/Mo</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-glass); padding:0.85rem; border-radius:0.5rem;">
+                                <div style="font-size:0.8rem; color:var(--text-muted);">Mini-Model Break-Even (GPT-4o-mini)</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:#f59e0b;">2.2 Billion Tokens/Mo</div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                speakerScript: "Many scale budgets are consumed by token charges. If your application queries frontier-tier systems heavily, migrating to local dedicated GPUs pays for itself almost instantly. At 500 million tokens, cloud APIs are three times more expensive than your private servers."
+            },
+            {
+                title: "Memory: The Critical Bottleneck",
+                content: `
+                    <div>
+                        <div class="big-idea-text">VRAM is the Real Limit</div>
+                        <p class="big-idea-subtitle" style="margin-bottom:1.5rem;">
+                            At the edge, your bottleneck is not compute cores—it is memory. Model parameter files must fit entirely within GPU VRAM to maintain viable speed.
+                        </p>
+                        <div class="highlight-grid">
+                            <div class="grid-card">
+                                <div style="color:#60a5fa; font-weight:bold; margin-bottom:0.15rem;">💾 4-Bit (Q4_0)</div>
+                                Compresses models like Gemma 4 12B to ~6.7 GB. Runs beautifully on mid-range hardware.
+                            </div>
+                            <div class="grid-card">
+                                <div style="color:#34d399; font-weight:bold; margin-bottom:0.15rem;">⚡ Unified Memory</div>
+                                Apple Silicon pools system and GPU memory, hosting 300B+ networks.
+                            </div>
+                            <div class="grid-card">
+                                <div style="color:#ec4899; font-weight:bold; margin-bottom:0.15rem;">📦 Quantization</div>
+                                Compressing weight coordinates to let models fit physical constraints without losing reasoning capacity.
+                            </div>
+                        </div>
+                    </div>
+                `,
+                speakerScript: "Edge AI is governed by VRAM bandwidth. If model parameters spill into system RAM, token generation speed tanks. Quantization acts as our compression filter, packing weights into 4-bit formats so dense models run smoothly on standard laptops."
+            },
+            {
+                title: "Unified Gateways: Zero-Rewrite Portability",
+                content: `
+                    <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap:2rem; align-items:center;">
+                        <div>
+                            <div class="big-idea-text" style="font-size:1.85rem; margin-bottom:0.75rem;">Decoupling Logic from Hardware</div>
+                            <p style="font-size:1.05rem; color:var(--text-muted); line-height:1.5; margin-bottom:1rem;">
+                                Wrap local and remote engines inside OpenAI-compatible Rest APIs. This dynamic routing layer allows swapping endpoints instantly with zero code changes.
+                            </p>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.5); padding: 1.25rem; border-radius: 0.75rem; border: 1px solid var(--border-glass); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; line-height: 1.4; color: #a5b4fc; text-align:center;">
+                            Frontend App &rarr; Gateway Router<br>
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;│<br>
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;├&rarr; (Sensitive) Local GGUF<br>
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;└&rarr; (Batch) Private Cloud vLLM
+                        </div>
+                    </div>
+                `,
+                speakerScript: "To scale smoothly, we deploy unified gateways. By mapping Ollama, llama.cpp, and vLLM behind a standard completions schema, our application frontends query a single endpoint—and the gateway routes queries dynamically based on compliance and latency."
+            },
+            {
+                title: "Edge Resilience in Action",
+                content: `
+                    <div style="display:flex; flex-direction:column; gap:1rem;">
+                        <div class="big-idea-text" style="font-size:1.85rem; margin-bottom:0.25rem;">Real-World Continuity</div>
+                        <p style="font-size:1.05rem; color:var(--text-muted); line-height:1.4;">
+                            Running AI on local hardware guarantees operational continuity when network reliability is non-existent.
+                        </p>
+                        <div class="highlight-grid">
+                            <div class="grid-card">
+                                <div class="grid-card-title">🩺 Healthcare</div>
+                                <div>HIPAA compliance by design. Patient data never leaves the clinic walls.</div>
+                            </div>
+                            <div class="grid-card">
+                                <div class="grid-card-title">🏭 Factories</div>
+                                <div>Predictive maintenance loops responding in milliseconds to sensor anomalies.</div>
+                            </div>
+                            <div class="grid-card">
+                                <div class="grid-card-title">🌲 Disaster Fields</div>
+                                <div>Offline vision and audio reasoning mapping terrain when grid networks fail.</div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                speakerScript: "Ultimately, edge intelligence yields extreme reliability. Whether keeping biometric records secure in clinics, analyzing high-speed industrial sensors, or running offline multimodal search models on rescue fields, local weights give you full operational independence. Thank you!"
+            }
+        ];
+
+        let activeSlideIndex = 0;
+
+        function renderSlide() {
+            const slide = slidesData[activeSlideIndex];
+            document.getElementById('current-slide-title').innerText = slide.title;
+            document.getElementById('current-slide-number').innerText = `Slide ${activeSlideIndex + 1} / ${slidesData.length}`;
+            document.getElementById('current-slide-body').innerHTML = slide.content;
+            document.getElementById('current-slide-notes').innerText = slide.speakerScript;
+            
+            // Update dots
+            const dotsContainer = document.getElementById('slide-navigation-dots');
+            dotsContainer.innerHTML = '';
+            slidesData.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = `slide-dot ${i === activeSlideIndex ? 'active' : ''}`;
+                dot.onclick = () => {
+                    activeSlideIndex = i;
+                    renderSlide();
+                };
+                dotsContainer.appendChild(dot);
+            });
+            
+            // Enable/disable buttons
+            document.getElementById('slide-prev-btn').disabled = activeSlideIndex === 0;
+            document.getElementById('slide-next-btn').disabled = activeSlideIndex === slidesData.length - 1;
+
+            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function nextSlide() {
+            if (activeSlideIndex < slidesData.length - 1) {
+                activeSlideIndex++;
+                renderSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (activeSlideIndex > 0) {
+                activeSlideIndex--;
+                renderSlide();
+            }
+        }
+
+        function toggleFullscreen() {
+            const box = document.getElementById('slide-viewer-box');
+            box.classList.toggle('fullscreen');
+        }
+
+        // Listen for keyboard navigation
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Escape') {
+                const box = document.getElementById('slide-viewer-box');
+                if (box.classList.contains('fullscreen')) {
+                    box.classList.remove('fullscreen');
+                }
+            }
+        });
+
+        // Global click listener for lightbox-zoom of slide images
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'IMG' && (e.target.closest('.slide-content') || e.target.closest('.slide-container') || e.target.closest('#slide-display'))) {
+                openLightbox(e.target.src);
+            }
+        });
+
+        function openLightbox(src) {
+            let modal = document.getElementById('global-lightbox');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'global-lightbox';
+                modal.className = 'lightbox-modal';
+                modal.innerHTML = '<img class="lightbox-content" id="lightbox-img" src="">';
+                document.body.appendChild(modal);
+                modal.addEventListener('click', () => {
+                    modal.classList.remove('active');
+                    setTimeout(() => { modal.style.display = 'none'; }, 300);
+                });
+            }
+            const img = modal.querySelector('#lightbox-img');
+            img.src = src;
+            modal.style.display = 'flex';
+            // Force browser reflow to animate correctly
+            modal.offsetHeight;
+            modal.classList.add('active');
+        }
+
+        // Initialize slide deck
+        renderSlide();
+    </script>
+</body>
+</html>

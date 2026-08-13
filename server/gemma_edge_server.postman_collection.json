@@ -1,0 +1,208 @@
+{
+  "info": {
+    "_postman_id": "0dfeb7ad-b13c-4cfd-9273-97992cb91b8a",
+    "name": "Gemma Edge & Cloud Server",
+    "description": "API collection for a live demo, containing separate folders for Local Edge and Cloud Run environments to guarantee zero config-switching during presentations.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔴 Local Edge Server (http://localhost:5002)",
+      "description": "Requests configured to query the local network edge server running on port 5002.",
+      "item": [
+        {
+          "name": "1. GET Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{local_base_url}}/health",
+            "description": "Check if local edge server is healthy and loaded."
+          },
+          "response": []
+        },
+        {
+          "name": "2. POST Generate Text (Standard JSON)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Q: Name three fruits that are yellow.\\nA:\",\n  \"temperature\": 0.7,\n  \"max_tokens\": 32,\n  \"stop\": [\"\\n\", \"Q:\"],\n  \"stream\": false\n}"
+            },
+            "url": "{{local_base_url}}/api/generate",
+            "description": "Standard JSON text generation from local edge server."
+          },
+          "response": []
+        },
+        {
+          "name": "3. POST Generate Text (Streaming SSE)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Write an inspiring quote about open weight models.\",\n  \"temperature\": 0.8,\n  \"max_tokens\": 64,\n  \"stream\": true\n}"
+            },
+            "url": "{{local_base_url}}/api/generate",
+            "description": "Streaming event-stream generation from local edge server."
+          },
+          "response": []
+        },
+        {
+          "name": "4. POST OpenAI Chat (Standard)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Explain the difference between closed APIs and open weights in one short paragraph.\"\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 128,\n  \"stream\": false\n}"
+            },
+            "url": "{{local_base_url}}/v1/chat/completions",
+            "description": "OpenAI-compatible Chat endpoint on local edge server."
+          },
+          "response": []
+        },
+        {
+          "name": "5. POST OpenAI Chat (Streaming SSE)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a haiku about modern Web architecture.\"\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 64,\n  \"stream\": true\n}"
+            },
+            "url": "{{local_base_url}}/v1/chat/completions",
+            "description": "OpenAI-compatible streaming chat on local edge server."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "☁️ Google Cloud Run Server (Active Deployment)",
+      "description": "Requests configured to target the live, secure public API endpoint on GCP.",
+      "item": [
+        {
+          "name": "1. GET Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{cloud_base_url}}/health",
+            "description": "Check if cloud server is healthy and active."
+          },
+          "response": []
+        },
+        {
+          "name": "2. POST Generate Text (Standard JSON)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Q: Name three fruits that are yellow.\\nA:\",\n  \"temperature\": 0.7,\n  \"max_tokens\": 32,\n  \"stop\": [\"\\n\", \"Q:\"],\n  \"stream\": false\n}"
+            },
+            "url": "{{cloud_base_url}}/api/generate",
+            "description": "Standard JSON text generation from live Cloud Run deployment."
+          },
+          "response": []
+        },
+        {
+          "name": "3. POST Generate Text (Streaming SSE)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Write an inspiring quote about open weight models.\",\n  \"temperature\": 0.8,\n  \"max_tokens\": 64,\n  \"stream\": true\n}"
+            },
+            "url": "{{cloud_base_url}}/api/generate",
+            "description": "Streaming event-stream generation from live Cloud Run deployment."
+          },
+          "response": []
+        },
+        {
+          "name": "4. POST OpenAI Chat (Standard)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Explain the difference between closed APIs and open weights in one short paragraph.\"\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 128,\n  \"stream\": false\n}"
+            },
+            "url": "{{cloud_base_url}}/v1/chat/completions",
+            "description": "OpenAI-compatible Chat endpoint on live Cloud Run deployment."
+          },
+          "response": []
+        },
+        {
+          "name": "5. POST OpenAI Chat (Streaming SSE)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a haiku about modern Web architecture.\"\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 64,\n  \"stream\": true\n}"
+            },
+            "url": "{{cloud_base_url}}/v1/chat/completions",
+            "description": "OpenAI-compatible streaming chat on live Cloud Run deployment."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "cloud_base_url",
+      "value": "https://gemma-edge-server-420844676062.us-central1.run.app",
+      "type": "string",
+      "description": "Active Google Cloud Run deployment endpoint."
+    },
+    {
+      "key": "local_base_url",
+      "value": "http://localhost:5002",
+      "type": "string",
+      "description": "Active Local Edge deployment endpoint."
+    }
+  ]
+}
